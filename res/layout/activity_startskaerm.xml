@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal|center_vertical|top"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|top"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/spilNavn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Throw Bomb"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="38dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/startSpil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp"
+            android:text="Start Game" />
+
+        <Button
+            android:id="@+id/credits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="Credits" />
+
+    </LinearLayout>
+
+</LinearLayout>

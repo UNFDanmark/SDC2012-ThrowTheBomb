@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/credits1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Credits"
+        android:textSize="26dp" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="125dp"
+        android:text="Coding and pictures made by:\n
+        \n
+        Christian Gram\n
+        Maalthe Baungaard\n
+        Frederik Lindgreen\n
+        Asger Buhl Møller\n
+        \n
+        App developed at Software Development Camp 2012 at Aalborg University\n 
+        Thanks to all the people behind the camp!"
+        android:textSize="18dp" />
+
+</LinearLayout>

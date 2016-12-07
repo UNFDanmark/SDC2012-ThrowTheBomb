@@ -1,0 +1,10 @@
+K 10
+svn:ignore
+V 47
+gen
+bin
+project.properties
+.project
+.classpath
+
+END

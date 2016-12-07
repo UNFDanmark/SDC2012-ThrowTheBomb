@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">Throw Bomb</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main_activityu">MainActivityu</string>
+    <string name="title_activity_startskærm">Throw Bomb</string>
+    <string name="title_activity_spil">Game</string>
+    <string name="title_activity_credits">Credits</string>
+
+</resources>

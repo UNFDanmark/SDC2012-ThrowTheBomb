@@ -1,0 +1,50 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutId"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PLAYER 1, STARTS SERVER. THEN PLAYER 2 CHOOSE CONNECT TO SERVER. THEN WAIT UNTIL YOU ARE CONNECTED! HEREAFTER THE GAME WILL START. ENJOY THE GAME! :D" />
+
+    <ImageView
+        android:id="@+id/bombe_billede"
+        android:layout_width="match_parent"
+        android:layout_height="156dp"
+        android:layout_marginTop="30dp"
+        android:layout_weight="0.20"
+        android:src="@drawable/bomb" />
+
+    <Button
+        android:id="@+id/kastBombe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Throw bomb" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="20dp"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/start_server_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start server" />
+
+        <Button
+            android:id="@+id/start_client_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect to server" />
+    </LinearLayout>
+
+</LinearLayout>

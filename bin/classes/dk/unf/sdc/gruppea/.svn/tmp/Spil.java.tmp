@@ -1,0 +1,338 @@
+package dk.unf.sdc.gruppea;
+
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class Spil extends Activity {
+
+	private Button kastBombe;
+	private TextView tid;
+	private long startTime;
+	private long endTime;
+<<<<<<< .mine
+	private CharSequence totalTime;
+	private int randomnuber;
+=======
+	private long totalTimeUsed; 
+	private long totalTimeLeft;
+	private long bombeStartTime;
+>>>>>>> .r11
+
+	private Context mContext;
+	NetworkService netService;
+	BluetoothAdapter mBluetoothAdapter;
+	private static final int REQUEST_ENABLE_BT = 1;
+	private static final String tag = "BluetoothFrame";
+	private ArrayList<BluetoothDevice> discoveredPeers;
+	private AlertDialog serverDialog;
+	private AlertDialog clientDialog;
+	private EditText input_serverName;
+	private EditText input_clientServerName;
+	private String clientServerName;
+	private EditText message;
+	private Button server;
+	private Button client;
+	private Button send;
+	private ImageView im;
+	private Toast toast;
+
+	// Message types sent from the BluetoothChatService Handler
+	public static final int MESSAGE_READ = 1;
+
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_spil);
+
+		kastBombe = (Button) findViewById(R.id.kastBombe);
+		kastBombe.setOnClickListener(listenerKast);
+
+		tid = (TextView) findViewById(R.id.tid);
+
+		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		if (mBluetoothAdapter == null) {
+			// Device does not support Bluetooth
+		}
+		netService = new NetworkService(mContext, mBluetoothAdapter, mHandler);
+		IntentFilter deviceFilter = new IntentFilter(
+				BluetoothDevice.ACTION_FOUND);
+		Log.d(tag, "Registering deviceReceiver");
+		registerReceiver(deviceReceiver, deviceFilter); // Don't forget to
+														// unregister during
+														// onDestroy
+		IntentFilter adapterFilter = new IntentFilter(
+				BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+		Log.d(tag, "Registering adapterReceiver");
+		registerReceiver(adapterReceiver, adapterFilter); // Don't forget to
+															// unregister during
+															// onDestroy
+		registerReceiver(updateInterface, new IntentFilter(
+				NetworkService.UPDATE_TEXT));
+		server = (Button) findViewById(R.id.start_server_button);
+		server.setOnClickListener(startServerListener);
+		client = (Button) findViewById(R.id.start_client_button);
+		client.setOnClickListener(startClientListener);
+		serverDialog = new AlertDialog.Builder(this).create();
+		clientDialog = new AlertDialog.Builder(this).create();
+		input_serverName = new EditText(this);
+		input_clientServerName = new EditText(this);
+		discoveredPeers = new ArrayList<BluetoothDevice>();
+		send = (Button) findViewById(R.id.kastBombe);
+		send.setOnClickListener(sendListener);
+		im = (ImageView) findViewById(R.id.bombe_billede);
+
+	}
+
+	private OnClickListener listenerKast = new OnClickListener() { //startknap
+
+		@Override
+		public void onClick(View v) {
+			Random randomStartTime = new Random();
+			kastBombe.setOnClickListener(listenerbuttonEt);
+
+			startTime = System.currentTimeMillis();
+			
+			bombeStartTime = randomStartTime.nextInt(15000)+1000;//test tid.
+			totalTimeLeft = bombeStartTime; //funger ikke med flere phones.
+		}
+
+	};
+
+	private OnClickListener listenerbuttonEt = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+
+			endTime = System.currentTimeMillis();
+
+			totalTimeUsed = endTime - startTime;
+			totalTimeLeft = totalTimeLeft - totalTimeUsed;//totalTimeLeft
+			
+			if (0 >= totalTimeLeft) { //checkmekanisme
+				tid.setText("BOOM, DU ER IKKE I LIVE MERE!");
+			}
+			else{
+				tid.setText("tiden er ikke gået endnu");
+				totalTimeUsed =0;
+			}
+			startTime = endTime; //spørg Anders om
+		};
+
+	};
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Log.d(tag, "Unregistering deviceReceiver");
+		unregisterReceiver(deviceReceiver);
+		Log.d(tag, "Unregistering adapterReceiver");
+		unregisterReceiver(adapterReceiver);
+	}
+
+	private final BroadcastReceiver updateInterface = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			String mess = intent.getStringExtra("message");
+			Toast.makeText(mContext, mess, Toast.LENGTH_SHORT).show();
+		}
+	};
+
+	// Create a BroadcastReceiver for ACTION_FOUND
+	private final BroadcastReceiver deviceReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			// When discovery finds a device
+			Log.d(tag, action);
+			Log.d(tag,
+					String.valueOf(BluetoothDevice.ACTION_FOUND.equals(action)));
+			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+				// Get the BluetoothDevice object from the Intent
+				BluetoothDevice device = intent
+						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				try {
+					discoveredPeers.add(device);
+					Log.d(tag, device.getName() + " added to discovered list.");
+				} catch (Exception e) {
+					Log.d(tag, "Failed adding device to device list.");
+				}
+			}
+		}
+	};
+
+	// Create a BroadcastReceiver for ACTION_DISCOVERY
+	private final BroadcastReceiver adapterReceiver = new BroadcastReceiver() {
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			// When discovery finds a device
+			Log.d(tag, action);
+			if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+
+				Log.d(tag, "Trying to connect as client.");
+				boolean bo = false;
+				for (BluetoothDevice device : discoveredPeers) {
+					Log.d(tag, "DEVICE NAME: " + device.getName());
+					if (device.getName().equals(clientServerName)) {
+						Log.d(tag, "Discovered, OK.");
+						netService
+								.connect(device, "Skriv noget her");//message.getText().toString());
+						bo = true;
+					}
+				}
+				if (!bo) {
+					Toast.makeText(
+							getApplicationContext(),
+							"Could not find server with name: "
+									+ clientServerName, Toast.LENGTH_SHORT)
+							.show();
+				}
+			}
+		}
+	};
+
+	@Override
+	protected void onActivityResult(int request, int result, Intent intent) {
+		switch (request) {
+		case REQUEST_ENABLE_BT:
+			// When the request to enable Bluetooth returns
+			if (result == Activity.RESULT_OK) {
+				// Bluetooth is now enabled, so set up a chat session
+				Log.d(tag, "BT enabled");
+				Toast.makeText(this, "BT Enabled", Toast.LENGTH_SHORT).show();
+			} else {
+				// User did not enable Bluetooth or an error occurred
+				Log.d(tag, "BT not enabled");
+				Toast.makeText(this, "BT Not Enabled", Toast.LENGTH_SHORT)
+						.show();
+			}
+		}
+	}
+
+	private OnClickListener startServerListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			serverDialog.setTitle("Start Server");
+			serverDialog.setView(input_serverName);
+			serverDialog.setMessage("Angiv navnet for din server:");
+			serverDialog.setCancelable(false);
+			serverDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+					"Start server", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							if (!mBluetoothAdapter.isEnabled()) {
+								Intent enableBtIntent = new Intent(
+										BluetoothAdapter.ACTION_REQUEST_ENABLE);
+								startActivityForResult(enableBtIntent,
+										REQUEST_ENABLE_BT);
+							}
+							Intent discoverableIntent = new Intent(
+									BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+							discoverableIntent
+									.putExtra(
+											BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,
+											0);
+							startActivity(discoverableIntent);
+							mBluetoothAdapter.setName(input_serverName
+									.getText().toString());
+							Log.d(tag, "Bluetooth name set to: "
+									+ mBluetoothAdapter.getName());
+
+							Log.d(tag, "Starting server.");
+							netService.start();
+						}
+					});
+			serverDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Annuller",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							serverDialog.cancel();
+						}
+					});
+			serverDialog.show();
+		}
+	};
+
+	private OnClickListener startClientListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			clientDialog.setTitle("Forbind til Server");
+			clientDialog.setView(input_clientServerName);
+			clientDialog
+					.setMessage("Angiv navnet p� den server du �nsker at forbinde til:");
+			clientDialog.setCancelable(false);
+			clientDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+					"Forbind til server",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							if (!mBluetoothAdapter.isEnabled()) {
+								Intent enableBtIntent = new Intent(
+										BluetoothAdapter.ACTION_REQUEST_ENABLE);
+								startActivityForResult(enableBtIntent,
+										REQUEST_ENABLE_BT);
+							}
+							clientServerName = input_clientServerName.getText()
+									.toString();
+							Log.d(tag, "clientServerName is: "
+									+ clientServerName);
+							mBluetoothAdapter.startDiscovery();
+
+						}
+					});
+			clientDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Annuller",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							clientDialog.cancel();
+						}
+					});
+			clientDialog.show();
+		}
+	};
+	private OnClickListener sendListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			netService.writemessage("Skriv noget her");//message.getText().toString());
+			im.setVisibility(View.INVISIBLE);
+			toast.cancel();
+		}
+	};
+
+	// The Handler that gets information back from the BluetoothChatService
+	private final Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+
+			case MESSAGE_READ:
+				byte[] readBuf = (byte[]) msg.obj;
+				// construct a string from the valid bytes in the buffer
+				String readMessage = new String(readBuf, 0, msg.arg1);
+				im.setVisibility(View.VISIBLE);
+				toast = Toast.makeText(getApplicationContext(),
+						"Du har bomben!", Toast.LENGTH_SHORT);
+				toast.show();
+				break;
+
+			}
+		}
+	};
+
+}
